@@ -1,0 +1,157 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import sys,os,urllib,re,time
+from pygame import mixer
+if os.name=="nt":
+	print "Windows isn't supported."
+	SystemExit
+class bcolors:
+	HEADER = '\033[95m'
+	OKBLUE = '\033[94m'
+	OKGREEN = '\033[92m'
+	WARNING = '\033[93m'
+	FAIL = '\033[91m'
+	ENDC = '\033[0m'
+	BOLD = '\033[1m'
+	UNDERLINE = '\033[4m'
+	BL = '\033[30m'
+	BW = '\033[47m'
+def trow():
+	return int(os.popen('stty size','r').read().split()[0])
+def tcol():
+	return int(os.popen('stty size','r').read().split()[1])
+def cls():
+	os.system('cls' if os.name=='nt' else 'clear')
+def hr():
+	return "-"*tcol()
+def gv(text):
+	return urllib.urlencode({"a":text})[2:]
+def ungv(text):
+	return urllib.unquote(text.replace("+"," "))
+def rr(results,p):
+	global st
+	global n
+	if p=="<":
+		if n<=10:
+			print "No more page back."
+		else:
+			cls()
+			print st+"\n"+hr()
+			tn=n-10
+			while n>=0 and n>tn:
+				if n%2==0:
+					print bcolors.BW+bcolors.BL+str(n)+"-"+"".join(re.findall('&raquo;">(.*?)</a>',r[n]))+"-"+"".join(re.findall('&ndash; (.*?)</span>',r[n]))+"-"+"".join(re.findall('span class="dur">(.*?)</span>',r[n]))+bcolors.ENDC
+				else:
+					print str(n)+"-"+"".join(re.findall('&raquo;">(.*?)</a>',r[n]))+"-"+"".join(re.findall('&ndash; (.*?)</span>',r[n]))+"-"+"".join(re.findall('span class="dur">(.*?)</span>',r[n]))
+				n-=1
+			print "< page "+str(n/10)+"/"+str(len(results)/10)+" >"
+	else:
+		if n>=len(results):
+			print "No more page."
+		else:
+			cls()
+			print st+"\n"+hr()
+			tn=n+10
+			while n<len(results) and n<tn:
+				if n%2==0:
+					print bcolors.BW+bcolors.BL+str(n)+"-"+"".join(re.findall('&raquo;">(.*?)</a>',r[n]))+"-"+"".join(re.findall('&ndash; (.*?)</span>',r[n]))+"-"+"".join(re.findall('span class="dur">(.*?)</span>',r[n]))+bcolors.ENDC
+				else:
+					print str(n)+"-"+"".join(re.findall('&raquo;">(.*?)</a>',r[n]))+"-"+"".join(re.findall('&ndash; (.*?)</span>',r[n]))+"-"+"".join(re.findall('span class="dur">(.*?)</span>',r[n]))
+				n+=1
+			print "< page "+str(n/10)+"/"+str(len(results)/10)+" >"
+def gr(results,num,w):
+	wr="".join(re.findall('&raquo;">(.*?)</a>',results[num]))+"-"+"".join(re.findall('&ndash; (.*?)</span>',results[num]))+"-"+"".join(re.findall('span class="dur">(.*?)</span>',results[num]))
+	if w=="s":
+		return wr.split("-")[0]
+	if w=="n":
+		return wr.split("-")[1:-1]
+	if w=="t":
+		return wr.split("-")[-1]
+	else:
+		return wr
+url="https://petamusic.ru/"
+print "Connecting..."
+try:
+	urllib.urlopen(url)
+	print "Ok"
+except Exception as e:
+	print "Error:\n"+str(e)
+	sys.exit()
+e=True
+while e:
+	cls()
+	if tcol()>=17:
+		sp=int((tcol()-17)/2)
+		print " "*sp+" _  _  _ _ __  __"
+		print " "*sp+"| \/ || | |\ \/ /"
+		print " "*sp+"|    || | | \  /"
+		print " "*sp+"| \/ || | | /  \\"
+		print " "*sp+"|_||_||___|/_/\_\\"
+		print " "*sp+"music plyr/dwnldr"
+	else:
+		sp=int((tcol()-3)/2)
+		print " "*sp+"MUX"
+	q=raw_input("Search: ")
+	print "Connecting..."
+	html=urllib.urlopen(url+"?string="+gv(q)).read().replace("\n","")
+	ul="".join(re.findall('<ul class="results">(.*?)</ul>',html))
+	r=re.findall('&amp;sort=artist" title="(.*?)</li>',ul)
+	d=re.findall('</a> <a class="link" href="(.*?)" title="',ul)
+	if len(r)==0:
+		print 'No results for "'+q+'"'
+	else:
+		global st
+		st=str(len(r))+' results for "'+q+'"'
+		global n
+		n=0
+		com="..."
+		while com!="s":
+			if com=="...":
+				rr(r,"")
+			com=raw_input("> ")
+			if com=="exit":
+				print "Bye."
+				sys.exit()
+			elif com=="s":
+				SystemExit
+			elif com=="<" or com==">":
+				rr(r,com)
+			elif com.startswith("d "):
+				try:
+					if int(com.split(" ")[1])<len(r):
+						print "Downloading number '"+com.split(" ")[1]+"' to '"+ungv(d[int(com.split(" ")[1])].split("/")[-1])+"'..."
+						f=open(ungv(d[int(com.split(" ")[1])].split("/")[-1]),"w")
+						f.write(urllib.urlopen("https:"+d[int(com.split(" ")[1])]).read())
+						f.close()
+						print "Ok"
+					else:
+						print "'"+com.split(" ")[1]+"' out of index."
+				except:
+					print "'"+com.split(" ")[1]+"' out of index."
+			elif com.isdigit():
+				if int(com)<len(r):
+					try:
+						print "Playing '"+ungv(d[int(com)].split("/")[-1])+"'"
+						print gr(r,int(com),"")
+						f=open("/tmp/"+ungv(d[int(com)].split("/")[-1]),"w")
+						f.write(urllib.urlopen("https:"+d[int(com)]).read())
+						f.close()
+						mixer.init()
+						mixer.music.load("/tmp/"+ungv(d[int(com)].split("/")[-1]))
+						mixer.music.play()
+						start=time.time()
+						durat=int(gr(r,int(com),"t").split(":")[0])*60+int(gr(r,int(com),"t").split(":")[1])
+						while time.time()-start<=durat:
+							print str(int(time.time()-start))+"/"+str(durat)+" "+str((int(time.time()-start)*100)/durat)+"%\r",
+							sys.stdout.flush()
+							time.sleep(1)
+						print "End."
+					except KeyboardInterrupt:
+						print "Stop."
+						mixer.music.stop()
+						if os.path.isfile("/tmp/"+ungv(d[int(com)].split("/")[-1])):
+							os.remove("/tmp/"+ungv(d[int(com)].split("/")[-1]))
+				else:
+					print "'"+com+"' out of index."
+			else:
+				print "'"+com+"' not found."

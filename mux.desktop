@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=MUX
+Comment=Music player/downloader
+Exec=mux
+Terminal=true
+Type=Application
+Icon=/usr/local/share/mux/mux.png
+Categories=Music;Audio;Player
