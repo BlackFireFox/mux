@@ -24,8 +24,9 @@ install:
 	fi
 	mkdir -p $(home).mux/
 	chmod 777 $(home).mux/
-	echo -e "user=$(u);\nwallet=0;\nborn=$(date +%s);" > $(home).mux/set.conf
-	chmod 777 $(home).mux/set.conf
+	echo "user=$(u);\ninstalled=$(date +%s);\nsaveto=.;" > $(home).mux/set.conf
+	touch $(home).mux/history.log
+	chmod 777 $(home).mux/*
 	mkdir -p /usr/local/share/mux/
 	cp mux.png /usr/local/share/mux/
 
