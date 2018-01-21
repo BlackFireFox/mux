@@ -51,8 +51,8 @@ reinstall:
 	fi
 	cp mux $(pre)mux
 	chmod +x $(pre)mux
-	rm -rf $(home).mux/
-	mkdir -p $(home).mux/
+	#rm -rf $(home).mux/
+	#mkdir -p $(home).mux/
 	rm -rf /usr/local/share/mux/
 	mkdir -p /usr/local/share/mux/
 	cp mux.png /usr/local/share/mux/
