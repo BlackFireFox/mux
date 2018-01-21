@@ -155,11 +155,15 @@ while e:
 		raw_input("<ENTER> to continue")
 	elif q==".v":
 		print "You are using: "+bcolors.OKBLUE+"v"+v+bcolors.ENDC
-		lc=urllib.urlopen("https://raw.githubusercontent.com/BlackFireFox/mux/master/mux").read().replace("\n","")
+		llc=urllib.urlopen("https://raw.githubusercontent.com/BlackFireFox/mux/master/mux").read()
+		lc=llc.replace("\n","")
 		if not 'v="' in lc:
 			lv="0.1"
 		else:
-			lv="".join(re.findall('v="(.*?)"',lc))
+			for line in llc.splitlines():
+				if 'v="' in line:
+					lv="".join(re.findall('v="(.*?)"',line))
+					break
 		print "Latest: "+bcolors.OKBLUE+"v"+lv+bcolors.ENDC
 		if float(v)<float(lv):
 			print bcolors.FAIL+"Your software isn't up to date."+bcolors.ENDC
