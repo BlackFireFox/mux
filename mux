@@ -172,7 +172,7 @@ while e:
 			if up.lower()=="y" or up.lower()=="yes":
 				try:
 					print "Update..."
-					os.system("git clone https://github.com/BlackFireFox/spyder temp && cd temp/ && mv ../temp/* .. && rm -rf ../temp")
+					os.system("git clone https://github.com/BlackFireFox/mux temp && cd temp/ && mv ../temp/* .. && rm -rf ../temp")
 					print "Completed."
 					print "To install updates run:\nsudo make reinstall"
 				except:
