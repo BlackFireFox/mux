@@ -5,7 +5,7 @@ from pygame import mixer
 if os.name=="nt":
 	print "Windows isn't supported."
 	SystemExit
-v="1.1"
+v="1.2"
 class bcolors:
 	HEADER = '\033[95m'
 	OKBLUE = '\033[94m'
@@ -24,7 +24,8 @@ def tcol():
 def cls():
 	os.system('cls' if os.name=='nt' else 'clear')
 def hr():
-	return "-"*tcol()
+	#return "-"*tcol()
+	return "─"*tcol()
 clist=[".history",".history -c","s",".set","exit",".exit","quit",".quit",".v"]
 for a in range(50):
 	clist.append(str(a))
@@ -255,12 +256,14 @@ while e:
 							start=time.time()
 							durat=int(gr(r,int(com),"t").split(":")[0])*60+int(gr(r,int(com),"t").split(":")[1])
 							while time.time()-start<=durat:
-								print str(int(time.time()-start))+"/"+str(durat)+" "+str((int(time.time()-start)*100)/durat)+"%\r",
+								ts=str(int(time.time()-start))+"/"+str(durat)+" "+str((int(time.time()-start)*100)/durat)+"%"
+								bar="["+"="*((((tcol()-len(ts)-2)*(int(time.time()-start)*100)/durat))/100)
+								print ts+bar+" "*(tcol()-len(ts)-len(bar)-1)+"]"+"\r",
 								sys.stdout.flush()
 								time.sleep(1)
-							print "End."
+							print "\nEnd."
 						except KeyboardInterrupt:
-							print "Stop."
+							print "\nStop."
 							mixer.music.stop()
 							if os.path.isfile("/tmp/"+ungv(d[int(com)].split("/")[-1])):
 								os.remove("/tmp/"+ungv(d[int(com)].split("/")[-1]))
