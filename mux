@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys,os,urllib,re,time,readline
+import sys,os,urllib,re,time,readline,getch
 from pygame import mixer
+from threading import Thread
 if os.name=="nt":
 	print "Windows isn't supported."
 	SystemExit
-v="1.2"
+v="1.4"
 class bcolors:
 	HEADER = '\033[95m'
 	OKBLUE = '\033[94m'
@@ -64,9 +65,11 @@ def rr(results,p):
 			tn=n-10
 			while n>=0 and n>tn:
 				if n%2==0:
-					print bcolors.BW+bcolors.BL+str(n)+"-"+"".join(re.findall('&raquo;">(.*?)</a>',r[n]))+"-"+"".join(re.findall('&ndash; (.*?)</span>',r[n]))+"-"+"".join(re.findall('span class="dur">(.*?)</span>',r[n]))+bcolors.ENDC
+					#print bcolors.BW+bcolors.BL+str(n)+"-"+"".join(re.findall('&raquo;">(.*?)</a>',r[n]))+"-"+"".join(re.findall('&ndash; (.*?)</span>',r[n]))+"-"+"".join(re.findall('span class="dur">(.*?)</span>',r[n]))+bcolors.ENDC
+					print bcolors.BW+bcolors.BL+str(n)+"-"+r[n]+"-"+rn[n]+"-"+rt[n]+bcolors.ENDC
 				else:
-					print str(n)+"-"+"".join(re.findall('&raquo;">(.*?)</a>',r[n]))+"-"+"".join(re.findall('&ndash; (.*?)</span>',r[n]))+"-"+"".join(re.findall('span class="dur">(.*?)</span>',r[n]))
+					#print str(n)+"-"+"".join(re.findall('&raquo;">(.*?)</a>',r[n]))+"-"+"".join(re.findall('&ndash; (.*?)</span>',r[n]))+"-"+"".join(re.findall('span class="dur">(.*?)</span>',r[n]))
+					print str(n)+"-"+r[n]+"-"+rn[n]+"-"+rt[n]
 				n-=1
 			print "< page "+str(n/10)+"/"+str(len(results)/10)+" >"
 	else:
@@ -78,12 +81,14 @@ def rr(results,p):
 			tn=n+10
 			while n<len(results) and n<tn:
 				if n%2==0:
-					print bcolors.BW+bcolors.BL+str(n)+"-"+"".join(re.findall('&raquo;">(.*?)</a>',r[n]))+"-"+"".join(re.findall('&ndash; (.*?)</span>',r[n]))+"-"+"".join(re.findall('span class="dur">(.*?)</span>',r[n]))+bcolors.ENDC
+					#print bcolors.BW+bcolors.BL+str(n)+"-"+"".join(re.findall('&raquo;">(.*?)</a>',r[n]))+"-"+"".join(re.findall('&ndash; (.*?)</span>',r[n]))+"-"+"".join(re.findall('span class="dur">(.*?)</span>',r[n]))+bcolors.ENDC
+					print bcolors.BW+bcolors.BL+str(n)+"-"+r[n]+"-"+rn[n]+"-"+rt[n]+bcolors.ENDC
 				else:
-					print str(n)+"-"+"".join(re.findall('&raquo;">(.*?)</a>',r[n]))+"-"+"".join(re.findall('&ndash; (.*?)</span>',r[n]))+"-"+"".join(re.findall('span class="dur">(.*?)</span>',r[n]))
+					#print str(n)+"-"+"".join(re.findall('&raquo;">(.*?)</a>',r[n]))+"-"+"".join(re.findall('&ndash; (.*?)</span>',r[n]))+"-"+"".join(re.findall('span class="dur">(.*?)</span>',r[n]))
+					print str(n)+"-"+r[n]+"-"+rn[n]+"-"+rt[n]
 				n+=1
 			print "< page "+str(n/10)+"/"+str(len(results)/10)+" >"
-def gr(results,num,w):
+"""def gr(results,num,w):
 	wr="".join(re.findall('&raquo;">(.*?)</a>',results[num]))+"-"+"".join(re.findall('&ndash; (.*?)</span>',results[num]))+"-"+"".join(re.findall('span class="dur">(.*?)</span>',results[num]))
 	if w=="s":
 		return wr.split("-")[0]
@@ -92,7 +97,31 @@ def gr(results,num,w):
 	if w=="t":
 		return wr.split("-")[-1]
 	else:
-		return wr
+		return wr"""
+global ms
+ms=""
+def kpress():
+	global ms
+	while time.time()-start<=durat and ms!="stop":
+		key=getch.getch()
+		if key==" ":
+			if ms=="play":
+				mixer.music.pause()
+				ms="pause"
+			else:
+				mixer.music.unpause()
+				ms="play"
+		elif key=="q":
+			mixer.music.stop()
+			ms="stop"
+def bar():
+	global ms
+	while time.time()-start<=durat and ms!="stop":
+		ts=" "+str(int(time.time()-start))+"/"+str(durat)+" "+str((int(time.time()-start)*100)/durat)+"%"
+		bar="["+"="*((((tcol()-len(ts)-2)*(int(time.time()-start)*100)/durat))/100)
+		print ts+bar+" "*(tcol()-len(ts)-len(bar)-1)+"]"+"\r",
+		sys.stdout.flush()
+		time.sleep(1)
 def wsm():
 	if not os.path.isfile(os.path.expanduser("~")+"/.mux/set.conf"):
 		wsm="./"
@@ -184,12 +213,14 @@ while e:
 		raw_input("<ENTER> to continue")
 	elif q==".history":
 		cls()
+		whis.close()
 		if not os.path.isfile(os.path.expanduser("~")+"/.mux/history.log"):
 			open(os.path.expanduser("~")+"/.mux/history.log","w+").close()
 		print "History ("+os.path.expanduser("~")+"/.mux/history.log):"
 		his=open(os.path.expanduser("~")+"/.mux/history.log","r")
 		print his.read()
 		his.close()
+		whis=open(os.path.expanduser("~")+"/.mux/history.log","a")
 		raw_input("<ENTER> to continue")
 	elif q==".history -c":
 		if not os.path.isfile(os.path.expanduser("~")+"/.mux/history.log"):
@@ -204,15 +235,21 @@ while e:
 	else:
 		whis.write(str(time.time())+" - Looking for: "+q+"\n")
 		print "Connecting..."
-		html=urllib.urlopen(url+"?string="+gv(q)).read().replace("\n","")
-		ul="".join(re.findall('<ul class="results">(.*?)</ul>',html))
-		r=re.findall('&amp;sort=artist" title="(.*?)</li>',ul)
-		d=re.findall('</a> <a class="link" href="(.*?)" title="',ul)
+		html=urllib.urlopen(url+"?q="+gv(q)).read().replace("\n","").replace("\r","").replace("\t","")
+		ul="".join(re.findall('<div id="results">(.*?)</div></div></div></div>',html))
+		#r=re.findall('&amp;sort=artist" title="(.*?)</li>',ul)
+		r=re.findall('" class="artist">(.*?)</a>',ul)
+		rn=re.findall('</span><span class="title">(.*?)</span>',ul)
+		rt=re.findall('<span class="time">(.*?)</span>',ul)
+		#d=re.findall('</a> <a class="link" href="(.*?)" title="',ul)
+		d=re.findall('&raquo;" href="(.*?)" target="_blank">',ul)
 		if len(r)==0:
 			print 'No results for "'+q+'"'
+			print html
+			raw_input("<ENTER> to continue")
 		else:
 			global st
-			st=str(len(r))+' results for "'+q+'"'
+			st=str(len(rn))+' results for "'+q+'"'
 			global n
 			n=0
 			com="..."
@@ -231,9 +268,9 @@ while e:
 				elif com.startswith("d "):
 					try:
 						if int(com.split(" ")[1])<len(r):
-							whis.write(str(time.time())+" - Download: "+wsm()+ungv(d[int(com.split(" ")[1])].split("/")[-1]))
-							print "Downloading number '"+com.split(" ")[1]+"' to '"+wsm()+ungv(d[int(com.split(" ")[1])].split("/")[-1])+"'..."
-							f=open(wsm()+ungv(d[int(com.split(" ")[1])].split("/")[-1]),"w")
+							whis.write(str(time.time())+" - Download: "+wsm()+ungv(d[int(com.split(" ")[1])].split("/")[-1].split("?")[0]))
+							print "Downloading number '"+com.split(" ")[1]+"' to '"+wsm()+ungv(d[int(com.split(" ")[1])].split("/")[-1].split("?")[0])+"'..."
+							f=open(wsm()+ungv(d[int(com.split(" ")[1])].split("/")[-1].split("?")[0]),"w")
 							f.write(urllib.urlopen("https:"+d[int(com.split(" ")[1])]).read())
 							f.close()
 							print "Ok"
@@ -244,27 +281,33 @@ while e:
 				elif com.isdigit():
 					if int(com)<len(r):
 						try:
-							whis.write(str(time.time())+" - Play: "+ungv(d[int(com)].split("/")[-1]))
-							print "Playing '"+ungv(d[int(com)].split("/")[-1])+"'"
-							print gr(r,int(com),"")
-							f=open("/tmp/"+ungv(d[int(com)].split("/")[-1]),"w")
+							whis.write(str(time.time())+" - Play: "+ungv(d[int(com)].split("/")[-1].split("?")[0]))
+							print "Playing '"+ungv(d[int(com)].split("/")[-1].split("?")[0])+"'"
+							print r[int(com)]+"-"+rn[int(com)]+"-"+rt[int(com)]
+							f=open("/tmp/"+ungv(d[int(com)].split("/")[-1].split("?")[0]),"w")
 							f.write(urllib.urlopen("https:"+d[int(com)]).read())
 							f.close()
 							mixer.init()
-							mixer.music.load("/tmp/"+ungv(d[int(com)].split("/")[-1]))
+							mixer.music.load("/tmp/"+ungv(d[int(com)].split("/")[-1].split("?")[0]))
 							mixer.music.play()
 							start=time.time()
-							durat=int(gr(r,int(com),"t").split(":")[0])*60+int(gr(r,int(com),"t").split(":")[1])
-							while time.time()-start<=durat:
-								ts=str(int(time.time()-start))+"/"+str(durat)+" "+str((int(time.time()-start)*100)/durat)+"%"
-								bar="["+"="*((((tcol()-len(ts)-2)*(int(time.time()-start)*100)/durat))/100)
-								print ts+bar+" "*(tcol()-len(ts)-len(bar)-1)+"]"+"\r",
-								sys.stdout.flush()
-								time.sleep(1)
-							print "\nEnd."
+							durat=int(rt[int(com)].split(":")[0])*60+int(rt[int(com)].split(":")[1])
+							ms="play"
+							while time.time()-start<=durat and ms!="stop":
+								tbr=Thread(target=bar()).start()
+								tkp=Thread(target=kpress()).start()
+							#tkp.do_run=False
+							#tbr.do_run=False
+							if ms=="stop":
+								print "\nStop."
+							else:
+								print "\nEnd."
 						except KeyboardInterrupt:
 							print "\nStop."
 							mixer.music.stop()
+							ms="stop"
+							#tkp.do_run=False
+							#tbr.do_run=False
 							if os.path.isfile("/tmp/"+ungv(d[int(com)].split("/")[-1])):
 								os.remove("/tmp/"+ungv(d[int(com)].split("/")[-1]))
 					else:
