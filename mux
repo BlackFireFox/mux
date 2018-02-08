@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys,os,urllib,re,time,readline,getch
+import sys,os,urllib,re,time,readline#,getch
 from pygame import mixer
-from threading import Thread
+#from threading import Thread
 if os.name=="nt":
 	print "Windows isn't supported."
 	SystemExit
-v="1.6"
+v="1.6.1"
 class bcolors:
 	HEADER = '\033[95m'
 	OKBLUE = '\033[94m'
@@ -100,7 +100,7 @@ def rr(results,p):
 		return wr"""
 global ms
 ms=""
-def kpress():
+"""def kpress():
 	global ms
 	while time.time()-start<=durat and ms!="stop":
 		key=getch.getch()
@@ -113,7 +113,7 @@ def kpress():
 				ms="play"
 		elif key=="q":
 			mixer.music.stop()
-			ms="stop"
+			ms="stop"""
 def bar():
 	global ms
 	while time.time()-start<=durat and ms!="stop":
@@ -307,8 +307,9 @@ while e:
 									durat=int(rt[int(com)].split(":")[0])*60+int(rt[int(com)].split(":")[1])
 									ms="play"
 									while time.time()-start<=durat and ms!="stop":
-										tbr=Thread(target=bar()).start()
-										tkp=Thread(target=kpress()).start()
+										bar()
+										#tbr=Thread(target=bar()).start()
+										#tkp=Thread(target=kpress()).start()
 									#tkp.do_run=False
 									#tbr.do_run=False
 									if ms=="stop":
