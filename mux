@@ -6,7 +6,7 @@ from pygame import mixer
 if os.name=="nt":
 	print "Windows isn't supported."
 	SystemExit
-v="1.6.3"
+v="1.6.4"
 class bcolors:
 	HEADER = '\033[95m'
 	OKBLUE = '\033[94m'
@@ -62,15 +62,18 @@ def rr(results,p):
 		else:
 			cls()
 			print st+"\n"+hr()
-			tn=n-10
-			while n>=0 and n>tn:
+			n-=20
+			if n<0:
+				n=0
+			tn=n+10
+			while n<len(results) and n<tn:
 				if n%2==0:
 					#print bcolors.BW+bcolors.BL+str(n)+"-"+"".join(re.findall('&raquo;">(.*?)</a>',r[n]))+"-"+"".join(re.findall('&ndash; (.*?)</span>',r[n]))+"-"+"".join(re.findall('span class="dur">(.*?)</span>',r[n]))+bcolors.ENDC
 					print bcolors.BW+bcolors.BL+str(n)+"-"+r[n]+"-"+rn[n]+"-"+rt[n]+bcolors.ENDC
 				else:
 					#print str(n)+"-"+"".join(re.findall('&raquo;">(.*?)</a>',r[n]))+"-"+"".join(re.findall('&ndash; (.*?)</span>',r[n]))+"-"+"".join(re.findall('span class="dur">(.*?)</span>',r[n]))
 					print str(n)+"-"+r[n]+"-"+rn[n]+"-"+rt[n]
-				n-=1
+				n+=1
 			print "< page "+str(n/10)+"/"+str(len(results)/10)+" >"
 	else:
 		if n>=len(results):
