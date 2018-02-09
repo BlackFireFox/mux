@@ -6,7 +6,7 @@ from pygame import mixer
 if os.name=="nt":
 	print "Windows isn't supported."
 	SystemExit
-v="1.6.1"
+v="1.6.2"
 class bcolors:
 	HEADER = '\033[95m'
 	OKBLUE = '\033[94m'
@@ -273,21 +273,21 @@ while e:
 				elif com=="<" or com==">":
 					rr(r,com)
 				elif com.startswith("d "):
-					for com in com.split(" ")[1:]:
-						if com.isdigit():
+					for mf in com.split(" ")[1:]:
+						if mf.isdigit():
 							try:
-								if int(com.split(" ")[1])<len(r):
+								if int(mf)<len(r):
 									if whis!="":
-										whis.write(str(time.time())+" - Download: "+wsm()+ungv(d[int(com.split(" ")[1])].split("/")[-1].split("?")[0]))
-									print "Downloading number '"+com.split(" ")[1]+"' to '"+wsm()+ungv(d[int(com.split(" ")[1])].split("/")[-1].split("?")[0])+"'..."
-									f=open(wsm()+ungv(d[int(com.split(" ")[1])].split("/")[-1].split("?")[0]),"w")
-									f.write(urllib.urlopen("https:"+d[int(com.split(" ")[1])]).read())
+										whis.write(str(time.time())+" - Download: "+wsm()+ungv(d[int(mf)].split("/")[-1].split("?")[0]))
+									print "Downloading number '"+mf+"' to '"+wsm()+ungv(d[int(mf)].split("/")[-1].split("?")[0])+"'..."
+									f=open(wsm()+ungv(d[int(mf)].split("/")[-1].split("?")[0]),"w")
+									f.write(urllib.urlopen("https:"+d[int(mf)]).read())
 									f.close()
 									print "Ok"
 								else:
-									print "'"+com.split(" ")[1]+"' out of index."
+									print "'"+mf+"' out of index."
 							except:
-								print "'"+com.split(" ")[1]+"' out of index."
+								print "'"+mf+"' out of index."
 				elif com.split(" ")[0].isdigit():
 					for com in com.split(" "):
 						if com.isdigit():
