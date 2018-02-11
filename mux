@@ -6,7 +6,7 @@ from pygame import mixer
 if os.name=="nt":
 	print "Windows isn't supported."
 	SystemExit
-v="1.6.5"
+v="1.6.6"
 class bcolors:
 	HEADER = '\033[95m'
 	OKBLUE = '\033[94m'
@@ -202,7 +202,13 @@ while e:
 		print "Latest: "+bcolors.OKBLUE+"v"+lv+bcolors.ENDC
 		if float(v.split(".")[0]+"."+"".join(v.split(".")[1:]))<float(lv.split(".")[0]+"."+"".join(lv.split(".")[1:])):
 			print bcolors.FAIL+"Your software isn't up to date."+bcolors.ENDC
-			up=raw_input("Update? [y or n]: ")
+			cvs=os.path.getsize(os.path.realpath(__file__))
+			lvs=len(llc)
+			if lvs>=cvs:
+				ssp=str(lvs-cvs)+"B more"
+			else:
+				ssp=str(cvs-lvs)+"B less"
+			up=raw_input("Update? ("+str(lvs)+"B, "+ssp+") [y or n]: ")
 			if up.lower()=="y" or up.lower()=="yes":
 				try:
 					print "Update..."
