@@ -6,7 +6,7 @@ from pygame import mixer
 if os.name=="nt":
 	print "Windows isn't supported."
 	SystemExit
-v="1.6.4"
+v="1.6.5"
 class bcolors:
 	HEADER = '\033[95m'
 	OKBLUE = '\033[94m'
@@ -254,7 +254,7 @@ while e:
 		d=re.findall('&raquo;" href="(.*?)" target="_blank">',ul)
 		if len(r)==0:
 			print 'No results for "'+q+'"'
-			print html
+			#print html
 			raw_input("<ENTER> to continue")
 		else:
 			global st
