@@ -6,7 +6,7 @@ from pygame import mixer
 if os.name=="nt":
 	print "Windows isn't supported."
 	SystemExit
-v="1.6.8"
+v="1.6.9"
 class bcolors:
 	HEADER = '\033[95m'
 	OKBLUE = '\033[94m'
@@ -171,7 +171,7 @@ def wsm():
 ctx=ssl.create_default_context()
 ctx.check_hostname=False
 ctx.verify_mode=ssl.CERT_NONE
-url="https://petamusic.ru/"
+url="https://petapleer.ru/"
 print "Connecting..."
 try:
 	urllib.urlopen(url)
