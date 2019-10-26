@@ -225,7 +225,7 @@ while e:
 		raw_input("<ENTER> to continue")
 	elif q==".v":
 		print "You are using: "+bcolors.OKBLUE+"v"+v+bcolors.ENDC
-		llc=urllib.urlopen("https://raw.githubusercontent.com/BlackFireFox/mux/master/mux").read()
+		llc=urllib.urlopen("https://raw.githubusercontent.com/Bytezz/mux/master/mux").read()
 		lc=llc.replace("\n","")
 		if not 'v="' in lc:
 			lv="0.1"
@@ -247,13 +247,13 @@ while e:
 			if up.lower()=="y" or up.lower()=="yes":
 				try:
 					print "Update..."
-					os.system("git clone https://github.com/BlackFireFox/mux temp && cd temp/ && mv ../temp/* .. && rm -rf ../temp")
+					os.system("git clone https://github.com/Bytezz/mux temp && cd temp/ && mv ../temp/* .. && rm -rf ../temp")
 					print "Completed."
 					print "To install updates run:\nsudo make reinstall"
 				except:
 					print "Git not installed."
 					print "Go here for download:"
-					print "https://github.com/BlackFireFox/mux"
+					print "https://github.com/Bytezz/mux"
 		else:
 			print bcolors.OKGREEN+"Your software is up to date."+bcolors.ENDC
 		raw_input("<ENTER> to continue")
