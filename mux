@@ -6,7 +6,7 @@ from pygame import mixer
 if os.name=="nt":
 	print "Windows isn't supported."
 	SystemExit
-v="1.6.9"
+v="1.7.0"
 class bcolors:
 	HEADER = '\033[95m'
 	OKBLUE = '\033[94m'
@@ -171,7 +171,7 @@ def wsm():
 ctx=ssl.create_default_context()
 ctx.check_hostname=False
 ctx.verify_mode=ssl.CERT_NONE
-url="https://petapleer.ru/"
+url="https://ipleer.com/"
 print "Connecting..."
 try:
 	urllib.urlopen(url)
@@ -198,30 +198,35 @@ while e:
 		sp=int((tcol()-3)/2)
 		print bcolors.OKGREEN+" "*sp+"MUX"+bcolors.ENDC
 	if os.path.isfile("/usr/local/bin/mux"):
+		installed=True
 		print " "*int((tcol()-len("v"+v))/2)+bcolors.OKBLUE+"v"+v+bcolors.ENDC
 	else:
+		installed=False
 		print " "*int((tcol()-len("v"+v+" not installed"))/2)+bcolors.OKBLUE+"v"+v+bcolors.FAIL+" not installed"+bcolors.ENDC
 	q=raw_input("Search: ")
 	if q==".set":
-		cls()
-		if not os.path.isfile(os.path.expanduser("~")+"/.mux/set.conf"):
-			sett=open(os.path.expanduser("~")+"/.mux/set.conf","w+")
-			sett.write("user="+os.environ["USER"]+";\ninstalled="+time.time()+";saveto=.;")
+		if installed:
+			cls()
+			if not os.path.isfile(os.path.expanduser("~")+"/.mux/set.conf"):
+				sett=open(os.path.expanduser("~")+"/.mux/set.conf","w+")
+				sett.write("user="+os.environ["USER"]+";\ninstalled="+time.time()+";saveto=.;")
+				sett.close()
+			print "Settings ("+os.path.expanduser("~")+"/.mux/set.conf):"
+			sett=open(os.path.expanduser("~")+"/.mux/set.conf","r")
+			cset=sett.read()
 			sett.close()
-		print "Settings ("+os.path.expanduser("~")+"/.mux/set.conf):"
-		sett=open(os.path.expanduser("~")+"/.mux/set.conf","r")
-		cset=sett.read()
-		sett.close()
-		ocs="".join(re.findall('saveto=(.*?);',cset))
-		print "Save music at:",ocs
-		cs=raw_input("Change with: ")
-		cs.replace("~",os.path.expanduser("~"))
-		if cs=="":
-			cs=ocs
-		cset=cset.replace("saveto="+ocs+";","saveto="+cs+";")
-		sett=open(os.path.expanduser("~")+"/.mux/set.conf","w")
-		sett.write(cset)
-		sett.close()
+			ocs="".join(re.findall('saveto=(.*?);',cset))
+			print "Save music at:",ocs
+			cs=raw_input("Change with: ")
+			cs.replace("~",os.path.expanduser("~"))
+			if cs=="":
+				cs=ocs
+			cset=cset.replace("saveto="+ocs+";","saveto="+cs+";")
+			sett=open(os.path.expanduser("~")+"/.mux/set.conf","w")
+			sett.write(cset)
+			sett.close()
+		else:
+			print "Must install to config."
 		raw_input("<ENTER> to continue")
 	elif q==".v":
 		print "You are using: "+bcolors.OKBLUE+"v"+v+bcolors.ENDC
@@ -258,24 +263,31 @@ while e:
 			print bcolors.OKGREEN+"Your software is up to date."+bcolors.ENDC
 		raw_input("<ENTER> to continue")
 	elif q==".history":
-		cls()
-		if whis!="":
-			whis.close()
-		if not os.path.isfile(os.path.expanduser("~")+"/.mux/history.log"):
-			open(os.path.expanduser("~")+"/.mux/history.log","w+").close()
-		print "History ("+os.path.expanduser("~")+"/.mux/history.log):"
-		his=open(os.path.expanduser("~")+"/.mux/history.log","r")
-		print his.read()
-		his.close()
-		if whis!="":
-			whis=open(os.path.expanduser("~")+"/.mux/history.log","a")
+		if installed:
+			cls()
+			if whis!="":
+				whis.close()
+			if not os.path.isfile(os.path.expanduser("~")+"/.mux/history.log"):
+				open(os.path.expanduser("~")+"/.mux/history.log","w+").close()
+			print "History ("+os.path.expanduser("~")+"/.mux/history.log):"
+			his=open(os.path.expanduser("~")+"/.mux/history.log","r")
+			print his.read()
+			his.close()
+			if whis!="":
+				whis=open(os.path.expanduser("~")+"/.mux/history.log","a")
+		else:
+			print "Must install to store history."
 		raw_input("<ENTER> to continue")
 	elif q==".history -c":
-		if not os.path.isfile(os.path.expanduser("~")+"/.mux/history.log"):
-			open(os.path.expanduser("~")+"/.mux/history.log","w+").close()
-		his=open(os.path.expanduser("~")+"/.mux/history.log","w")
-		his.write("")
-		his.close()
+		if installed:
+			if not os.path.isfile(os.path.expanduser("~")+"/.mux/history.log"):
+				open(os.path.expanduser("~")+"/.mux/history.log","w+").close()
+			his=open(os.path.expanduser("~")+"/.mux/history.log","w")
+			his.write("")
+			his.close()
+		else:
+			print "Must install to store history."
+			raw_input("<ENTER> to continue")
 	elif q==".exit" or q==".quit":
 		if whis!="":
 			whis.close()
@@ -285,14 +297,14 @@ while e:
 		if whis!="":
 			whis.write(str(time.time())+" - Looking for: "+q+"\n")
 		print "Connecting..."
-		html=urllib.urlopen(url+"?q="+gv(q)).read().replace("\n","").replace("\r","").replace("\t","")
-		ul="".join(re.findall('<div id="results">(.*?)</div></div></div></div>',html))
+		html=urllib.urlopen(url+"search/q/"+gv(q)).read().replace("\n","").replace("\r","").replace("\t","")
+		ul="".join(re.findall('<ul class="playlist" id="playlist">(.*?)</ul><div class="rbt_offer"></div>',html))
 		#r=re.findall('&amp;sort=artist" title="(.*?)</li>',ul)
-		r=re.findall('" class="artist">(.*?)</a>',ul)
-		rn=re.findall('</span><span class="title">(.*?)</span>',ul)
-		rt=re.findall('<span class="time">(.*?)</span>',ul)
+		r=re.findall('<span class="cartist">(.*?)</span>',ul)
+		rn=re.findall('<span class="ctitle">(.*?)</span>',ul)
+		rt=re.findall('\(добавитьвизбранное\)</a>(.*?)</em>',ul.replace(" ","")) # time
 		#d=re.findall('</a> <a class="link" href="(.*?)" title="',ul)
-		d=re.findall('&raquo;" href="(.*?)" target="_blank">',ul)
+		d=re.findall('data-mp3="(.*?)"',ul)
 		if len(r)==0:
 			print 'No results for "'+q+'"'
 			#print html
@@ -320,33 +332,44 @@ while e:
 					for mf in com.split(" ")[1:]:
 						if mf.isdigit():
 							try:
+								filename=""
 								if int(mf)<len(r):
 									if whis!="":
 										whis.write(str(time.time())+" - Download: "+wsm()+ungv(d[int(mf)].split("/")[-1].split("?")[0])+"\n")
-									print "Downloading number '"+mf+"' to '"+wsm()+ungv(d[int(mf)].split("/")[-1].split("?")[0])+"'..."
-									f=open(wsm()+ungv(d[int(mf)].split("/")[-1].split("?")[0]),"w")
-									f.write(urllib2.urlopen("https:"+d[int(mf)],context=ctx).read())
+									filename=wsm()+ungv(d[int(mf)].split("/")[-1])
+									print "Downloading number '"+mf+"' to '"+filename+"'..."
+									f=open(filename,"w")
+									f.write(urllib2.urlopen(d[int(mf)],context=ctx).read())
 									f.close()
 									print "Ok"
 								else:
 									print "'"+mf+"' out of index."
-							except:
-								print "'"+mf+"' out of index."
+							except Exception as e:
+								print e
+								if filename!="":
+									os.remove(filename)
 				elif com.split(" ")[0].isdigit():
 					for com in com.split(" "):
 						if com.isdigit():
 							if int(com)<len(r):
+								filename=""
 								try:
 									if whis!="":
 										whis.write(str(time.time())+" - Play: "+ungv(d[int(com)].split("/")[-1].split("?")[0])+"\n")
-									print "Playing '"+ungv(d[int(com)].split("/")[-1].split("?")[0])+"'"
+									filename=ungv(d[int(com)].split("/")[-1])
+									print "Playing '"+filename+"'"
 									print r[int(com)]+"-"+rn[int(com)]+"-"+rt[int(com)]
 									#Thread(target=strm("/tmp/"+ungv(d[int(com)].split("/")[-1].split("?")[0]),urllib.urlopen("https:"+d[int(com)]))).start()
 									#Thread(target=plm("/tmp/"+ungv(d[int(com)].split("/")[-1].split("?")[0]),int(rt[int(com)].split(":")[0])*60+int(rt[int(com)].split(":")[1]))).start()
-									strm("/tmp/"+ungv(d[int(com)].split("/")[-1].split("?")[0]),urllib2.urlopen("https:"+d[int(com)],context=ctx))
-									plm("/tmp/"+ungv(d[int(com)].split("/")[-1].split("?")[0]),int(rt[int(com)].split(":")[0])*60+int(rt[int(com)].split(":")[1]))
+									strm("/tmp/"+filename,urllib2.urlopen(d[int(com)],context=ctx))
+									plm("/tmp/"+filename,int(rt[int(com)].split(":")[0])*60+int(rt[int(com)].split(":")[1]))
 								except Exception as e:
 									print e
+									if filename!="":
+										try:
+											os.remove("/tmp/"+filename)
+										except:
+											pass
 							else:
 								print "'"+com+"' out of index."
 				elif com.startswith("l "):
@@ -354,10 +377,10 @@ while e:
 						if mf.isdigit():
 							try:
 								if int(mf)<len(r):
-									print mf+" - "+"https:"+d[int(mf)]
+									print mf+" - "+d[int(mf)]
 								else:
 									print "'"+mf+"' out of index."
-							except:
-								print "'"+mf+"' out of index."
+							except Exception as e:
+								print e
 				else:
 					print "'"+com+"' not found."
